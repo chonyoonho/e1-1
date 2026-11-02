@@ -35,7 +35,7 @@
 - [x] 바인드 마운트 변경 반영 → [logs/05_bind_mount.txt](logs/05_bind_mount.txt)
 - [x] 볼륨 영속성 (컨테이너 삭제 전/후) → [logs/06_volume.txt](logs/06_volume.txt)
 - [x] Git 설정 (`git config --list`) → [logs/07_git.txt](logs/07_git.txt)
-- [ ] VSCode GitHub 로그인 + 저장소 연동 캡처 → [docs/screenshots/](docs/screenshots)
+- [x] VSCode GitHub 로그인 + 저장소 연동 캡처 → [docs/screenshots/](docs/screenshots)
 - [x] (보너스) Compose 단일/멀티 컨테이너, up/down/ps/logs, 환경변수 → [logs/08_compose.txt](logs/08_compose.txt)
 
 전체 로그를 한 문서로 모은 버전: **[docs/LOGS.md](docs/LOGS.md)**
