@@ -25,18 +25,18 @@
 
 ## 3) 수행 항목 체크리스트
 
-- [ ] 터미널 기본 조작 (pwd / ls -la / cd / mkdir / cp / mv / rm / cat / touch) → [logs/01_terminal.txt](logs/01_terminal.txt)
-- [ ] 권한 변경 실습 (파일 1개 + 디렉토리 1개, 변경 전/후 비교) → [logs/02_permissions.txt](logs/02_permissions.txt)
-- [ ] Docker 설치/데몬 점검 (`docker --version`, `docker info`) → [logs/03_docker_basics.txt](logs/03_docker_basics.txt)
-- [ ] Docker 운영 명령 (images / ps -a / logs / stats / stop) → 위와 같음
-- [ ] hello-world 실행, ubuntu 내부 명령, exec vs attach 비교 → 위와 같음
-- [ ] Dockerfile 커스텀 이미지 빌드/실행 → [logs/04_build_run.txt](logs/04_build_run.txt)
-- [ ] 포트 매핑 접속 2회 (8080, 8081) + 브라우저 캡처 → [docs/screenshots/](docs/screenshots)
-- [ ] 바인드 마운트 변경 반영 → [logs/05_bind_mount.txt](logs/05_bind_mount.txt)
-- [ ] 볼륨 영속성 (컨테이너 삭제 전/후) → [logs/06_volume.txt](logs/06_volume.txt)
-- [ ] Git 설정 (`git config --list`) → [logs/07_git.txt](logs/07_git.txt)
+- [x] 터미널 기본 조작 (pwd / ls -la / cd / mkdir / cp / mv / rm / cat / touch) → [logs/01_terminal.txt](logs/01_terminal.txt)
+- [x] 권한 변경 실습 (파일 1개 + 디렉토리 1개, 변경 전/후 비교) → [logs/02_permissions.txt](logs/02_permissions.txt)
+- [x] Docker 설치/데몬 점검 (`docker --version`, `docker info`) → [logs/03_docker_basics.txt](logs/03_docker_basics.txt)
+- [x] Docker 운영 명령 (images / ps -a / logs / stats / stop) → 위와 같음
+- [x] hello-world 실행, ubuntu 내부 명령, exec vs attach 비교 → 위와 같음
+- [x] Dockerfile 커스텀 이미지 빌드/실행 → [logs/04_build_run.txt](logs/04_build_run.txt)
+- [x] 포트 매핑 접속 2회 (8080, 8081) + 브라우저 캡처 → [docs/screenshots/](docs/screenshots)
+- [x] 바인드 마운트 변경 반영 → [logs/05_bind_mount.txt](logs/05_bind_mount.txt)
+- [x] 볼륨 영속성 (컨테이너 삭제 전/후) → [logs/06_volume.txt](logs/06_volume.txt)
+- [x] Git 설정 (`git config --list`) → [logs/07_git.txt](logs/07_git.txt)
 - [ ] VSCode GitHub 로그인 + 저장소 연동 캡처 → [docs/screenshots/](docs/screenshots)
-- [ ] (보너스) Compose 단일/멀티 컨테이너, up/down/ps/logs, 환경변수 → [logs/08_compose.txt](logs/08_compose.txt)
+- [x] (보너스) Compose 단일/멀티 컨테이너, up/down/ps/logs, 환경변수 → [logs/08_compose.txt](logs/08_compose.txt)
 
 전체 로그를 한 문서로 모은 버전: **[docs/LOGS.md](docs/LOGS.md)**
 
