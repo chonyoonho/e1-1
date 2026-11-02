@@ -1,0 +1,22 @@
+# 보너스: Compose 멀티 컨테이너 (web + redis)
+name: codyssey
+
+services:
+  web:
+    build: ./app
+    image: codyssey-web:1.0
+    ports:
+      - "${WEB_PORT:-8088}:${NGINX_PORT:-80}"
+    environment:
+      APP_ENV: ${APP_ENV:-compose}
+      NGINX_PORT: ${NGINX_PORT:-80}
+    depends_on:
+      - cache
+
+  cache:
+    image: redis:7-alpine
+    volumes:
+      - redis-data:/data
+
+volumes:
+  redis-data:

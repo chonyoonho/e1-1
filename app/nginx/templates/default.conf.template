@@ -1,0 +1,22 @@
+# nginx 공식 이미지는 시작 시 /etc/nginx/templates/*.template 을 envsubst 로 치환해
+# /etc/nginx/conf.d/ 에 생성한다. → 환경변수로 포트/모드를 바꿀 수 있다.
+server {
+    listen       ${NGINX_PORT};
+    server_name  localhost;
+
+    root   /usr/share/nginx/html;
+    index  index.html;
+
+    # 어떤 모드(APP_ENV)의 컨테이너가 응답했는지 헤더로 확인
+    add_header X-App-Env "${APP_ENV}" always;
+
+    # 헬스체크 전용 엔드포인트 (HEALTHCHECK에서 사용)
+    location = /health {
+        default_type text/plain;
+        access_log off;
+    }
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}

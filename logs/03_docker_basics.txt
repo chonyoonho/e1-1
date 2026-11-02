@@ -1,0 +1,255 @@
+# 수행 일시: 2026-11-02 15:11:57    
+
+# ===== 설치/데몬 점검 =====
+
+$ docker --version
+Docker version 29.9.2, build a82e528
+
+$ docker info
+Client:
+ Version:    29.9.2
+ Context:    desktop-linux
+ Debug Mode: false
+ Plugins:
+  agent: Docker AI Agent Runner (Docker Inc.)
+    Version:  v1.152.0
+    Path:     C:\Program Files\Docker\cli-plugins\docker-agent.exe
+  ai: Docker AI Agent - Ask Gordon (Docker Inc.)
+    Version:  v1.33.0
+    Path:     C:\Program Files\Docker\cli-plugins\docker-ai.exe
+  buildx: Docker Buildx (Docker Inc.)
+    Version:  v0.38.1
+    Path:     C:\Program Files\Docker\cli-plugins\docker-buildx.exe
+  compose: Docker Compose (Docker Inc.)
+    Version:  v5.6.1
+    Path:     C:\Program Files\Docker\cli-plugins\docker-compose.exe
+  debug: Get a shell into any image or container (Docker Inc.)
+    Version:  0.49.0
+    Path:     C:\Program Files\Docker\cli-plugins\docker-debug.exe
+  desktop: Docker Desktop commands (Docker Inc.)
+    Version:  4.97.0
+    Path:     C:\Program Files\Docker\cli-plugins\docker-desktop.exe
+  dhi: CLI for managing Docker Hardened Images (Docker Inc.)
+    Version:  v0.0.9
+    Path:     C:\Program Files\Docker\cli-plugins\docker-dhi.exe
+  extension: Manages Docker extensions (Docker Inc.)
+    Version:  v0.2.32
+    Path:     C:\Program Files\Docker\cli-plugins\docker-extension.exe
+  init: Creates Docker-related starter files for your project (Docker Inc.)
+    Version:  v1.4.1
+    Path:     C:\Program Files\Docker\cli-plugins\docker-init.exe
+  mcp: Docker MCP Plugin (Docker Inc.)
+    Version:  v0.44.2
+    Path:     C:\Program Files\Docker\cli-plugins\docker-mcp.exe
+  model: Docker Model Runner (Docker Inc.)
+    Version:  v1.2.9
+    Path:     C:\Program Files\Docker\cli-plugins\docker-model.exe
+  offload: Docker Offload (Docker Inc.)
+    Version:  v0.7.21
+    Path:     C:\Program Files\Docker\cli-plugins\docker-offload.exe
+  pass: Docker Pass Secrets Manager Plugin (beta) (Docker Inc.)
+    Version:  v0.3.2
+    Path:     C:\Program Files\Docker\cli-plugins\docker-pass.exe
+  sandbox: "docker sandbox" is deprecated, use Docker Sandboxes instead (Docker Inc.)
+    Version:  v0.13.0
+    Path:     C:\Program Files\Docker\cli-plugins\docker-sandbox.exe
+  scout: Docker Scout (Docker Inc.)
+    Version:  v1.27.0
+    Path:     C:\Program Files\Docker\cli-plugins\docker-scout.exe
+
+Server:
+ Containers: 0
+  Running: 0
+  Paused: 0
+  Stopped: 0
+ Images: 4
+ Server Version: 29.9.2
+ Storage Driver: overlayfs
+  driver-type: io.containerd.snapshotter.v1
+ Logging Driver: local
+ Cgroup Driver: cgroupfs
+ Cgroup Version: 2
+ Plugins:
+  Volume: local
+  Network: bridge host ipvlan macvlan null overlay
+  Log: awslogs fluentd gcplogs gelf journald json-file local splunk syslog
+ CDI spec directories:
+  /etc/cdi
+  /var/run/cdi
+ Discovered Devices:
+  cdi: docker.com/gpu=webgpu
+ Swarm: inactive
+ Runtimes: io.containerd.runc.v2 nvidia runc
+ Default Runtime: runc
+ Init Binary: docker-init
+ containerd version: b7a25261e029d68978bbf290df0a62fc819b3c51
+ runc version: v1.5.2-0-g29dd3dc2
+ init version: de40ad0
+ Security Options:
+  seccomp
+   Profile: builtin
+  cgroupns
+ Kernel Version: 6.18.54.1-microsoft-standard-WSL2
+ Operating System: Docker Desktop
+ OSType: linux
+ Architecture: x86_64
+ CPUs: 4
+ Total Memory: 7.715GiB
+ Name: docker-desktop
+ ID: 4f0594ba-f3ce-42ce-9097-46d15b3c958d
+ Docker Root Dir: /var/lib/docker
+ Debug Mode: false
+ HTTP Proxy: http.docker.internal:3128
+ HTTPS Proxy: http.docker.internal:3128
+ No Proxy: hubproxy.docker.internal
+ Labels:
+  com.docker.desktop.address=npipe://\\.\pipe\docker_cli
+ Experimental: false
+ Insecure Registries:
+  hubproxy.docker.internal:5555
+  127.0.0.0/8
+  ::1/128
+ Live Restore Enabled: false
+ Firewall Backend: iptables
+
+
+# ===== 이미지 다운로드 / 목록 =====
+
+$ docker pull hello-world
+Using default tag: latest
+latest: Pulling from library/hello-world
+Digest: sha256:c567b231f65614688711a75f31518a064258a51d442117a3e771a3a8fdba78ef
+Status: Image is up to date for hello-world:latest
+docker.io/library/hello-world:latest
+
+$ docker pull ubuntu:24.04
+24.04: Pulling from library/ubuntu
+Digest: sha256:fe81560990fae86dc4743202b2cb4d3df98d0bcf949173cecef15ce1127ef852
+Status: Image is up to date for ubuntu:24.04
+docker.io/library/ubuntu:24.04
+
+$ docker images
+IMAGE                ID             DISK USAGE   CONTENT SIZE   EXTRA
+codyssey-web:1.0     e51059dfcb06       73.6MB           21MB        
+hello-world:latest   c567b231f656       25.9kB         9.49kB        
+redis:7-alpine       8da19c7399dc       57.8MB         16.7MB        
+ubuntu:24.04         fe81560990fa        119MB         31.7MB        
+
+# ===== hello-world 실행 =====
+
+$ docker run --name hello hello-world
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+    (amd64)
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+
+To try something more ambitious, you can run an Ubuntu container with:
+ $ docker run -it ubuntu bash
+
+Share images, automate workflows, and more with a free Docker ID:
+ https://hub.docker.com/
+
+For more examples and ideas, visit:
+ https://docs.docker.com/get-started/
+
+
+# ===== ubuntu 컨테이너: 실행 → 내부 명령 (실행 후 자동 삭제 --rm) =====
+
+$ docker run --rm ubuntu:24.04 bash -c "ls / && echo hello-from-ubuntu && head -2 /etc/os-release"
+bin
+boot
+dev
+etc
+home
+lib
+lib64
+media
+mnt
+opt
+proc
+root
+run
+sbin
+srv
+sys
+tmp
+usr
+var
+hello-from-ubuntu
+PRETTY_NAME="Ubuntu 24.04.5 LTS"
+NAME="Ubuntu"
+
+# ===== exec vs attach 차이 관찰 =====
+
+$ docker run -dit --name ubu ubuntu:24.04 bash
+79a51a0d7af536355e47f8f984599d79b7e045e2e744d24c652553a2253aed2c
+
+$ docker exec ubu bash -c "echo exec 로 새 프로세스 실행; ps -ef"
+exec 로 새 프로세스 실행
+UID          PID    PPID  C STIME TTY          TIME CMD
+root           1       0 11 06:12 pts/0    00:00:00 bash
+root          10       0 83 06:12 ?        00:00:00 ps -ef
+
+$ docker ps --filter name=ubu --format "{{.Names}} {{.Status}}"
+ubu Up 1 second
+
+$ echo exit | docker attach ubu
+cannot attach stdin to a TTY-enabled container because stdin is not a terminal
+
+$ docker run -di --name ubu-attach ubuntu:24.04 bash
+f2d30c09ff1e5164e4543356c61525584d5362e973a2418ee2643907e0a88d67
+
+$ docker ps --filter name=ubu-attach --format "{{.Names}} {{.Status}}"
+ubu-attach Up Less than a second
+
+$ echo exit | docker attach ubu-attach; sleep 1; docker ps -a --filter name=ubu --format "{{.Names}} {{.Status}}"
+ubu-attach Exited (0) 1 second ago
+ubu Up 4 seconds
+
+# ===== 컨테이너 실행 / 목록 / 로그 / 리소스 / 중지 =====
+
+$ docker run -d --name ticker ubuntu:24.04 bash -c "for i in \$(seq 1 1000); do echo tick \$i; sleep 1; done"
+03960c69e8a78d20afd5fc247498941686a225c43421441495d8b1e682d42256
+
+$ sleep 3; docker ps
+CONTAINER ID   IMAGE          COMMAND                   CREATED         STATUS         PORTS     NAMES
+03960c69e8a7   ubuntu:24.04   "bash -c 'for i in $…"   4 seconds ago   Up 3 seconds             ticker
+79a51a0d7af5   ubuntu:24.04   "bash"                    9 seconds ago   Up 9 seconds             ubu
+
+$ docker logs --tail 5 ticker
+tick 1
+tick 2
+tick 3
+tick 4
+
+$ docker stats --no-stream
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O   PIDS
+03960c69e8a7   ticker    0.56%     1.324MiB / 7.715GiB   0.02%     872B / 126B     0B / 0B     2
+79a51a0d7af5   ubu       0.00%     956KiB / 7.715GiB     0.01%     1.34kB / 126B   0B / 0B     1
+
+$ docker stop ticker
+ticker
+
+$ docker ps -a
+CONTAINER ID   IMAGE          COMMAND                   CREATED          STATUS                                PORTS     NAMES
+03960c69e8a7   ubuntu:24.04   "bash -c 'for i in $…"   11 seconds ago   Exited (137) Less than a second ago             ticker
+f2d30c09ff1e   ubuntu:24.04   "bash"                    14 seconds ago   Exited (0) 12 seconds ago                       ubu-attach
+79a51a0d7af5   ubuntu:24.04   "bash"                    16 seconds ago   Up 16 seconds                                   ubu
+2292becf121e   hello-world    "/hello"                  19 seconds ago   Exited (0) 18 seconds ago                       hello
+
+# ===== 정리 =====
+
+$ docker rm -f hello ubu ubu-attach ticker
+hello
+ubu
+ubu-attach
+ticker
+

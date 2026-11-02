@@ -1,0 +1,125 @@
+# 수행 일시: 2026-11-02 15:11:52    
+
+# ===== 현재 위치 확인 (절대 경로) =====
+
+$ pwd
+/c/Users/세세/AppData/Local/Claude-Data/claude_pzs8sxrjxfjjc/scratch-workspaces/b78b981e-fd17-443f-96a6-23cff441391d/67d4754e-3738-4146-a920-587e3469cabd/scratch-2026-11-01-78dbdc
+
+# ===== 목록 확인 (숨김 파일 포함) =====
+
+$ ls -la
+total 43
+drwxr-xr-x 1 세세 197121     0 Nov  2 15:11 .
+drwxr-xr-x 1 세세 197121     0 Nov  1 17:01 ..
+-rw-r--r-- 1 세세 197121    44 Nov  2 15:11 .env.example
+drwxr-xr-x 1 세세 197121     0 Nov  2 15:08 .git
+-rw-r--r-- 1 세세 197121    16 Nov  1 15:26 .gitignore
+-rw-r--r-- 1 세세 197121 14718 Nov  1 15:29 README.md
+drwxr-xr-x 1 세세 197121     0 Nov  1 15:26 app
+-rw-r--r-- 1 세세 197121   406 Nov  2 15:11 docker-compose.yml
+drwxr-xr-x 1 세세 197121     0 Nov  1 15:26 docs
+drwxr-xr-x 1 세세 197121     0 Nov  2 15:11 logs
+drwxr-xr-x 1 세세 197121     0 Nov  2 15:10 mount-site
+drwxr-xr-x 1 세세 197121     0 Nov  2 15:11 scripts
+
+# ===== 디렉토리 생성 (-p: 중간 경로까지 한 번에) =====
+
+$ mkdir -p practice/docs practice/backup
+
+# ===== 이동 (상대 경로 / 절대 경로) =====
+
+$ cd practice && pwd
+/c/Users/세세/AppData/Local/Claude-Data/claude_pzs8sxrjxfjjc/scratch-workspaces/b78b981e-fd17-443f-96a6-23cff441391d/67d4754e-3738-4146-a920-587e3469cabd/scratch-2026-11-01-78dbdc/practice
+
+$ cd "$ROOT/practice/docs" && pwd
+/c/Users/세세/AppData/Local/Claude-Data/claude_pzs8sxrjxfjjc/scratch-workspaces/b78b981e-fd17-443f-96a6-23cff441391d/67d4754e-3738-4146-a920-587e3469cabd/scratch-2026-11-01-78dbdc/practice/docs
+
+$ cd practice/docs && cd ../.. && pwd
+/c/Users/세세/AppData/Local/Claude-Data/claude_pzs8sxrjxfjjc/scratch-workspaces/b78b981e-fd17-443f-96a6-23cff441391d/67d4754e-3738-4146-a920-587e3469cabd/scratch-2026-11-01-78dbdc
+
+# ===== 빈 파일 생성 / 내용 있는 파일 생성 =====
+
+$ touch practice/empty.txt
+
+$ echo "hello codyssey" > practice/hello.txt
+
+$ ls -la practice
+total 5
+drwxr-xr-x 1 세세 197121  0 Nov  2 15:11 .
+drwxr-xr-x 1 세세 197121  0 Nov  2 15:11 ..
+drwxr-xr-x 1 세세 197121  0 Nov  2 15:11 backup
+drwxr-xr-x 1 세세 197121  0 Nov  2 15:11 docs
+-rw-r--r-- 1 세세 197121  0 Nov  2 15:11 empty.txt
+-rw-r--r-- 1 세세 197121 15 Nov  2 15:11 hello.txt
+
+# ===== 파일 내용 확인 =====
+
+$ cat practice/hello.txt
+hello codyssey
+
+$ wc -c practice/empty.txt
+0 practice/empty.txt
+
+# ===== 복사 =====
+
+$ cp practice/hello.txt practice/backup/hello.bak
+
+$ cp -r practice/docs practice/docs_copy
+
+$ ls -la practice practice/backup
+practice:
+total 5
+drwxr-xr-x 1 세세 197121  0 Nov  2 15:11 .
+drwxr-xr-x 1 세세 197121  0 Nov  2 15:11 ..
+drwxr-xr-x 1 세세 197121  0 Nov  2 15:11 backup
+drwxr-xr-x 1 세세 197121  0 Nov  2 15:11 docs
+drwxr-xr-x 1 세세 197121  0 Nov  2 15:11 docs_copy
+-rw-r--r-- 1 세세 197121  0 Nov  2 15:11 empty.txt
+-rw-r--r-- 1 세세 197121 15 Nov  2 15:11 hello.txt
+
+practice/backup:
+total 1
+drwxr-xr-x 1 세세 197121  0 Nov  2 15:11 .
+drwxr-xr-x 1 세세 197121  0 Nov  2 15:11 ..
+-rw-r--r-- 1 세세 197121 15 Nov  2 15:11 hello.bak
+
+# ===== 이동 / 이름 변경 =====
+
+$ mv practice/hello.txt practice/docs/greeting.txt
+
+$ mv practice/docs_copy practice/docs_renamed
+
+$ ls -la practice practice/docs
+practice:
+total 4
+drwxr-xr-x 1 세세 197121 0 Nov  2 15:11 .
+drwxr-xr-x 1 세세 197121 0 Nov  2 15:11 ..
+drwxr-xr-x 1 세세 197121 0 Nov  2 15:11 backup
+drwxr-xr-x 1 세세 197121 0 Nov  2 15:11 docs
+drwxr-xr-x 1 세세 197121 0 Nov  2 15:11 docs_renamed
+-rw-r--r-- 1 세세 197121 0 Nov  2 15:11 empty.txt
+
+practice/docs:
+total 1
+drwxr-xr-x 1 세세 197121  0 Nov  2 15:11 .
+drwxr-xr-x 1 세세 197121  0 Nov  2 15:11 ..
+-rw-r--r-- 1 세세 197121 15 Nov  2 15:11 greeting.txt
+
+# ===== 삭제 =====
+
+$ rm practice/empty.txt
+
+$ rm -r practice/docs_renamed
+
+$ ls -la practice
+total 4
+drwxr-xr-x 1 세세 197121 0 Nov  2 15:11 .
+drwxr-xr-x 1 세세 197121 0 Nov  2 15:11 ..
+drwxr-xr-x 1 세세 197121 0 Nov  2 15:11 backup
+drwxr-xr-x 1 세세 197121 0 Nov  2 15:11 docs
+
+# ===== 정리 =====
+
+$ rm -rf practice && echo "practice 삭제 완료"
+practice 삭제 완료
+

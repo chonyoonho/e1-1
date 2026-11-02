@@ -1,0 +1,64 @@
+# 수행 일시: 2026-11-02 15:12:50    
+
+# ===== 볼륨 생성 / 확인 =====
+
+$ docker volume create codyssey-data
+codyssey-data
+
+$ docker volume ls
+DRIVER    VOLUME NAME
+local     codyssey-data
+
+$ docker volume inspect codyssey-data
+[
+    {
+        "CreatedAt": "2026-11-02T06:12:51Z",
+        "Driver": "local",
+        "Labels": null,
+        "Mountpoint": "/var/lib/docker/volumes/codyssey-data/_data",
+        "Name": "codyssey-data",
+        "Options": null,
+        "Scope": "local"
+    }
+]
+
+# ===== 컨테이너 1(vol-test)에 연결 후 데이터 기록 =====
+
+$ docker run -d --name vol-test -v codyssey-data:/data ubuntu:24.04 sleep infinity
+09df9147201ae8dc360511acd78afe6c039971ecffc6878def2fc4b63edcb117
+
+$ docker exec vol-test bash -c "echo persisted-at-\$(date +%H%M%S) > /data/hello.txt && cat /data/hello.txt"
+persisted-at-061254
+
+# ===== 컨테이너 1 삭제 =====
+
+$ docker rm -f vol-test
+vol-test
+
+$ docker ps -a --filter name=vol-test
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+
+# ===== 새 컨테이너 2(vol-test2)에 같은 볼륨 연결 → 데이터 유지 확인 =====
+
+$ docker run -d --name vol-test2 -v codyssey-data:/data ubuntu:24.04 sleep infinity
+5828f98777f7789ef524c21039c5fd15721448d5b07f299591a2584da5b0e686
+
+$ docker exec vol-test2 cat /data/hello.txt
+persisted-at-061254
+
+# ===== 비교: 볼륨 없이 컨테이너 레이어에 쓴 데이터는 새 컨테이너에서 보이지 않음 =====
+
+$ docker run --name novol ubuntu:24.04 bash -c "echo temp > /tmp/x.txt && cat /tmp/x.txt"
+temp
+
+$ docker rm novol
+novol
+
+$ docker run --rm ubuntu:24.04 cat /tmp/x.txt
+cat: /tmp/x.txt: No such file or directory
+
+# ===== 정리 =====
+
+$ docker rm -f vol-test2
+vol-test2
+

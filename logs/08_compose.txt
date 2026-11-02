@@ -1,0 +1,107 @@
+# 수행 일시: 2026-11-02 15:13:01    
+
+# ===== up / ps =====
+
+$ docker compose up -d --build --quiet-pull 2>&1 | grep -v -E "^#|exporting|resolve|DONE|CACHED|transferring|naming|unpacking"
+ Image codyssey-web:1.0 Building 
+
+
+
+
+
+
+
+
+
+ Image codyssey-web:1.0 Built 
+ Network codyssey_default Creating 
+ Volume codyssey_redis-data Creating 
+ Volume codyssey_redis-data Creating 
+ Network codyssey_default Creating 
+ Volume codyssey_redis-data Created 
+ Volume codyssey_redis-data Created 
+ Network codyssey_default Created 
+ Network codyssey_default Created 
+ Container codyssey-cache-1 Creating 
+ Container codyssey-cache-1 Created 
+ Container codyssey-web-1 Creating 
+ Container codyssey-web-1 Created 
+ Container codyssey-cache-1 Starting 
+ Container codyssey-cache-1 Started 
+ Container codyssey-web-1 Starting 
+ Container codyssey-web-1 Started 
+
+$ docker compose ps
+NAME               IMAGE              COMMAND                   SERVICE   CREATED         STATUS                                     PORTS
+codyssey-cache-1   redis:7-alpine     "docker-entrypoint.s…"   cache     2 seconds ago   Up 1 second                                6379/tcp
+codyssey-web-1     codyssey-web:1.0   "/docker-entrypoint.…"   web       2 seconds ago   Up Less than a second (health: starting)   0.0.0.0:8088->80/tcp, [::]:8088->80/tcp
+
+# ===== 접속 + 컨테이너 간 통신 (서비스 이름 cache 로 DNS 조회) =====
+
+$ sleep 3; curl -si http://localhost:8088 | grep -i -E "HTTP/|X-App-Env"
+HTTP/1.1 200 OK
+X-App-Env: compose
+
+$ docker compose exec -T web nslookup cache
+Server:		127.0.0.11
+Address:	127.0.0.11:53
+
+Non-authoritative answer:
+Name:	cache
+Address: 172.18.0.2
+
+Non-authoritative answer:
+
+
+$ docker compose exec -T web sh -c "printf \"PING\r\n\" | nc -w 2 cache 6379"
++PONG
+
+# ===== logs =====
+
+$ docker compose logs --tail 5
+web-1    | 2026/11/02 06:13:06 [notice] 1#1: start worker process 35
+web-1    | 2026/11/02 06:13:06 [notice] 1#1: start worker process 36
+web-1    | 2026/11/02 06:13:06 [notice] 1#1: start worker process 37
+cache-1  | 1:C 02 Nov 2026 06:13:05.741 # Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf
+web-1    | 2026/11/02 06:13:06 [notice] 1#1: start worker process 38
+web-1    | 172.18.0.1 - - [02/Nov/2026:06:13:10 +0000] "GET / HTTP/1.1" 200 650 "-" "curl/8.21.0" "-"
+cache-1  | 1:M 02 Nov 2026 06:13:05.742 * monotonic clock: POSIX clock_gettime
+cache-1  | 1:M 02 Nov 2026 06:13:05.745 * Running mode=standalone, port=6379.
+cache-1  | 1:M 02 Nov 2026 06:13:05.745 * Server initialized
+cache-1  | 1:M 02 Nov 2026 06:13:05.746 * Ready to accept connections tcp
+
+# ===== 환경변수로 포트/모드 변경 (호스트 9090 → 컨테이너 8000, 모드 staging) =====
+
+$ WEB_PORT=9090 NGINX_PORT=8000 APP_ENV=staging docker compose up -d
+ Container codyssey-cache-1 Running 
+ Container codyssey-web-1 Recreate 
+ Container codyssey-web-1 Recreated 
+ Container codyssey-web-1 Starting 
+ Container codyssey-web-1 Started 
+
+$ sleep 3; curl -si http://localhost:9090 | grep -i -E "HTTP/|X-App-Env"
+HTTP/1.1 200 OK
+X-App-Env: staging
+
+$ docker compose ps
+NAME               IMAGE              COMMAND                   SERVICE   CREATED          STATUS                            PORTS
+codyssey-cache-1   redis:7-alpine     "docker-entrypoint.s…"   cache     13 seconds ago   Up 12 seconds                     6379/tcp
+codyssey-web-1     codyssey-web:1.0   "/docker-entrypoint.…"   web       5 seconds ago    Up 4 seconds (health: starting)   0.0.0.0:9090->8000/tcp, [::]:9090->8000/tcp
+
+# ===== down =====
+
+$ docker compose down
+ Container codyssey-web-1 Stopping 
+ Container codyssey-web-1 Stopped 
+ Container codyssey-web-1 Removing 
+ Container codyssey-web-1 Removed 
+ Container codyssey-cache-1 Stopping 
+ Container codyssey-cache-1 Stopped 
+ Container codyssey-cache-1 Removing 
+ Container codyssey-cache-1 Removed 
+ Network codyssey_default Removing 
+ Network codyssey_default Removed 
+
+$ docker compose ps -a
+NAME      IMAGE     COMMAND   SERVICE   CREATED   STATUS    PORTS
+

@@ -1,0 +1,49 @@
+# 수행 일시: 2026-11-02 15:11:55    
+
+# ===== (참고) 호스트 Git Bash 에서 chmod 시도 → 변화 없음 =====
+
+$ cd "$(mktemp -d)" && touch f && ls -l f && chmod 600 f && ls -l f
+-rw-r--r-- 1 세세 197121 0 Nov  2 15:11 f
+-rw-r--r-- 1 세세 197121 0 Nov  2 15:11 f
+
+$ mount | grep " on / "
+C:/Program Files/Git on / type ntfs (binary,noacl,auto)
+
+# ===== ubuntu 컨테이너 안에서 권한 실습 (+ 는 컨테이너 안에서 실행된 명령) =====
+
+$ docker run --rm -i ubuntu:24.04 bash < "$ROOT/scripts/perm_inner.sh"
++ cd /tmp
++ mkdir perm-lab
++ cd perm-lab
++ echo secret
++ mkdir shared
++ stat -c '%A %a %n' memo.txt shared
+-rw-r--r-- 644 memo.txt
+drwxr-xr-x 755 shared
++ chmod 600 memo.txt
++ chmod 700 shared
++ stat -c '%A %a %n' memo.txt shared
+-rw------- 600 memo.txt
+drwx------ 700 shared
++ chmod u=rw,g=r,o=r memo.txt
++ chmod 755 shared
++ chmod u+x memo.txt
++ stat -c '%A %a %n' memo.txt shared
+-rwxr--r-- 744 memo.txt
+drwxr-xr-x 755 shared
++ useradd -m guest
++ chmod 700 shared
++ su guest -c 'ls /tmp/perm-lab/shared'
+ls: cannot open directory '/tmp/perm-lab/shared': Permission denied
+guest: shared 진입 거부 (700)
++ echo 'guest: shared 진입 거부 (700)'
++ chmod 755 shared
++ su guest -c 'ls -ld /tmp/perm-lab/shared && echo guest: 진입 가능 755'
+drwxr-xr-x 2 root root 4096 Nov  2 06:11 /tmp/perm-lab/shared
+guest: 진입 가능 755
++ chmod 600 memo.txt
++ su guest -c 'cat /tmp/perm-lab/memo.txt'
+cat: /tmp/perm-lab/memo.txt: Permission denied
++ echo 'guest: memo.txt 읽기 거부 (600)'
+guest: memo.txt 읽기 거부 (600)
+
