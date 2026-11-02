@@ -16,12 +16,12 @@
 | 항목 | 값 |
 |---|---|
 | OS | Windows 10 Home 22H2 (10.0.19045) |
-| Shell / Terminal | Git Bash (GNU bash 5.x) / VSCode 통합 터미널 |
+| Shell / Terminal | Git Bash (GNU bash 5.x, 실습 스크립트 실행) / PowerShell (VSCode 통합 터미널) |
 | Docker | Docker version 29.9.2 (Docker Desktop 29.9.2, WSL2 백엔드) |
 | Git | git version 2.55.0.windows.5 |
 | Editor | VSCode 1.144.0 |
 
-> macOS(OrbStack)나 Linux에서도 `bash scripts/run_all.sh` 하나로 같은 절차를 재현할 수 있습니다. Windows 전용 처리(`MSYS_NO_PATHCONV`, `pwd -W`)는 다른 OS에서는 자동으로 무시됩니다.
+> 실제로 실행해 검증한 환경은 위의 Windows 10 한 곳입니다. macOS(OrbStack)나 Linux에서도 같은 절차로 동작하도록 작성했지만(Windows 전용 처리 `MSYS_NO_PATHCONV`, `pwd -W`는 다른 OS에서는 무시됩니다) 직접 실행해 확인하지는 않았습니다.
 
 ## 3) 수행 항목 체크리스트
 
@@ -61,8 +61,8 @@
 ## 5) 재현 방법 (평가자용)
 
 ```bash
-git clone <이 저장소 URL>
-cd <저장소 폴더>
+git clone https://github.com/chonyoonho/e1-1.git
+cd e1-1
 # Docker 엔진(Docker Desktop / OrbStack)이 실행 중이어야 합니다.
 bash scripts/run_all.sh        # 모든 실습 실행 → logs/*.txt 생성
 bash scripts/make_logs_md.sh   # docs/LOGS.md 생성
@@ -295,7 +295,7 @@ $ docker run --rm ubuntu:24.04 cat /tmp/x.txt
 cat: /tmp/x.txt: No such file or directory
 ```
 
-### 6-8. Git 설정과 GitHub/VSCode 연동 — [07_git.sh](scripts/07_git.sh)
+### 6-8. Git 설정과 GitHub/VSCode 연동 — [07_git.sh](scripts/07_git.sh), 전체 출력: [logs/07_git.txt](logs/07_git.txt)
 
 ```bash
 git config --global user.name  "<이름>"
@@ -394,11 +394,11 @@ Git은 내 컴퓨터에서 변경 이력을 관리하는 **로컬 버전 관리 
 - **확인**: `mount` 결과에서 `C: on /c type ntfs (binary,noacl,...)`를 확인. `noacl` 옵션 때문에 권한이 가상으로만 표시됨
 - **해결/대안**: 리눅스 파일시스템을 가진 ubuntu 컨테이너 안에서 실습(`docker run -i ubuntu bash < perm_inner.sh`). WSL2의 리눅스 홈(`~`)에서 해도 됨
 
-### #2. Git Bash에서 `-v codyssey-data:/data` 경로가 이상하게 바뀜
-- **문제**: 컨테이너 안 경로 `/data`가 `C:/Program Files/Git/data`로 바뀌어 전달되거나, `docker exec ... cat /data/hello.txt`가 실패함
-- **원인 가설**: Git Bash(MSYS)가 `/`로 시작하는 인자를 Windows 경로로 자동 변환한다
-- **확인**: `MSYS_NO_PATHCONV=1`을 붙이면 정상 동작함
-- **해결**: [scripts/lib.sh](scripts/lib.sh)에서 `export MSYS_NO_PATHCONV=1`로 설정. 바인드 마운트의 호스트 경로는 `pwd -W`로 `C:/...` 형식을 만들어 전달
+### #2. Git Bash에서 컨테이너 경로(`/data`)가 Windows 경로로 바뀔 위험
+- **문제**: Git Bash(MSYS)는 `/`로 시작하는 명령 인자를 Windows 경로로 자동 변환한다. 예를 들어 `docker exec vol-test cat /data/hello.txt`의 `/data/hello.txt`가 `C:/Program Files/Git/data/hello.txt`로 바뀌어 컨테이너에 전달될 수 있다
+- **원인 가설**: 위 변환은 MSYS의 알려진 동작이라서, 컨테이너 안 경로를 인자로 넘기는 스크립트(볼륨 마운트 `-v 이름:/data`, `exec ... /data/...`)가 영향을 받는다
+- **확인**: 이 실습에서는 오류가 난 뒤에 고친 것이 아니라, 스크립트를 쓰기 전에 알려진 문제로 보고 미리 막아 두었다. 막은 상태(`MSYS_NO_PATHCONV=1`)에서 볼륨과 `exec` 실습이 모두 정상 동작했다([logs/06_volume.txt](logs/06_volume.txt))
+- **해결**: [scripts/lib.sh](scripts/lib.sh)에서 `export MSYS_NO_PATHCONV=1`로 설정. 대신 바인드 마운트의 **호스트** 쪽 경로는 Docker가 이해하는 `C:/...` 형식이어야 하므로 `pwd -W`로 만들어 전달
 
 ### #3. `docker attach` 시 `cannot attach stdin to a TTY-enabled container`
 - **문제**: attach 동작을 기록하려고 `echo exit | docker attach ubu`를 실행했더니 아래 오류가 남
@@ -410,14 +410,15 @@ Git은 내 컴퓨터에서 변경 이력을 관리하는 **로컬 버전 관리 
 - **확인**: `-t` 없이 `-di`로만 만든 `ubu-attach`에는 같은 명령이 정상 동작하고, `exit`가 PID 1 셸에 전달되어 `Exited (0)`이 됨
 - **해결**: 기록용 실습은 `-di` 컨테이너로 진행. 사람이 직접 칠 때는 `-it`/`-dit` + 터미널에서 `docker attach`를 쓰면 됨. 같은 이유로 스크립트에서는 `docker exec -it` 대신 `docker exec`, Compose는 `exec -T` 사용
 
-### #4. `docker stop` 후 상태가 `Exited (137)`이고 10초가 걸림
-- **문제**: `ticker` 컨테이너를 `docker stop` 하니 바로 멈추지 않고 약 10초 뒤 `Exited (137)`로 종료됨 (정상 종료라면 0)
-- **원인 가설**: `docker stop`은 먼저 SIGTERM을 보내고 10초 뒤 SIGKILL(128+9=137)을 보낸다. `bash -c` 루프가 PID 1로 실행되면, 신호 처리기가 없을 때 SIGTERM이 무시된다
-- **확인**: `docker ps -a`의 `Exited (137)`, 그리고 stop 명령에 걸린 시간
-- **해결/대안**: 실습용이라 그대로 두었습니다. 실제 서비스는 `docker run --init`(tini가 신호 전달)이나 스크립트에서 `trap 'exit 0' TERM`으로 처리하고, 빨리 끝내야 하면 `docker stop -t 2`를 씁니다. nginx처럼 SIGTERM을 처리하는 프로그램은 바로 종료됩니다
+### #4. `docker stop` 후 상태가 `Exited (137)`로 남음
+- **문제**: `ticker` 컨테이너를 `docker stop` 했더니 `docker ps -a`에 정상 종료 코드 0이 아니라 `Exited (137)`로 표시됨
+- **원인 가설**: `docker stop`은 SIGTERM을 먼저 보내고 일정 시간(기본 10초) 안에 끝나지 않으면 SIGKILL을 보낸다. 137은 128+9(SIGKILL)이다. `bash -c` 루프가 PID 1이면 신호 처리기가 없어 SIGTERM이 무시되므로 SIGKILL까지 가는 것으로 추정했다
+- **확인**: `docker ps -a`에서 `ticker`는 `Exited (137)`, 같은 방식으로 정상 종료한 `ubu-attach`는 `Exited (0)`으로 구분됨. 종료까지 걸린 시간은 따로 재지 않았다
+- **해결/대안**: 실습용이라 그대로 두었다. 실제 서비스라면 `docker run --init`(tini가 신호를 전달)을 쓰거나 스크립트에서 `trap 'exit 0' TERM`을 처리하고, 빨리 끝내야 하면 `docker stop -t 2`를 쓴다. SIGTERM을 처리하는 nginx 같은 프로그램은 0으로 종료된다
 
 ## 9) 보안 및 개인정보
 
 - `07_git.sh`는 `git config --list`의 이메일을 `ab***@domain` 형식으로 마스킹하고, `token`/`password`가 들어간 줄을 제외합니다.
 - `.env`, 개인키(`id_*`, `*.pem`)는 `.gitignore`로 커밋을 막았습니다.
-- 스크린샷에서 GitHub 계정 이메일, 토큰, 인증 코드는 가린 뒤 첨부합니다.
+- 첨부한 스크린샷은 토큰, 비밀번호, 인증 코드, 이메일이 나타나지 않는 화면만 사용했습니다. 브라우저 캡처는 계정 정보가 없는 InPrivate 창에서 찍었습니다.
+- 로그와 캡처에는 로컬 PC 경로(Windows 사용자 폴더 이름)가 일부 남아 있습니다. 인증 정보는 아닙니다.
